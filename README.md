@@ -1,5 +1,4 @@
-# Assignment #6: Course Database Assignment
-
+# Course Database 
 A simple course catalog management API built with Express.js and SQLite.
 
 ## Setup
