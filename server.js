@@ -23,9 +23,6 @@ app.use(express.json());
 // Custom logging middleware
 app.use(requestLogger);
 
-// Middleware
-app.use(express.json());
-
 // Connect to database
 const db = new sqlite3.Database('./database/university.db');
 
