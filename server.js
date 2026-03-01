@@ -1,6 +1,5 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
-const { body, validationResult } = require('express-validator');
 const app = express();
 const port = 3000;
 
@@ -16,7 +15,6 @@ const requestLogger = (req, res, next) => {
 
     next()
 };
-
 
 
 // Built-in middleware for parsing JSON
@@ -98,6 +96,29 @@ app.put('/api/courses/:id', (req, res) => {
     ); 
 });
 
+
+//DELETE
+app.delete('/api/courses/:id', (req, res) => {
+    const id = req.params.id;
+
+    if (isNaN(id) || id <= 0) {
+        return res.status(400).json({
+            error: 'Invalid course ID. ID must be a positive number.'
+        });
+    }
+
+    db.run('DELETE FROM courses WHERE id = ?', [id], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        res.json({ message: 'Course deleted successfully' });
+    });
+});
 
 
 app.listen(port, () => {
