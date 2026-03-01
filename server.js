@@ -18,6 +18,14 @@ app.get('/api/courses', (req, res) => {
 });
 
 
+// GET single course
+app.get('/api/courses/:id', (req, res) => { 
+    const id = req.params.id; 
+    db.get('SELECT * FROM courses WHERE id = ?', [id], (err, row) => { 
+        res.json(row); 
+    }); 
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
