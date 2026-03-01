@@ -71,6 +71,35 @@ app.post('/api/courses', (req, res) => {
 });
 
 
+//PUT | Update an existing course
+app.put('/api/courses/:id', (req, res) => { 
+    const id = req.params.id; 
+
+    if (isNaN(id) || id <= 0) {
+        return res.status(400).json({
+            error: 'Invalid course ID. ID must be a positive number.'
+        });
+    }
+
+    const { courseCode, title, credits, description, semester } = req.body; 
+
+    db.run(` UPDATE courses SET courseCode = ?, title = ?, credits = ?, description = ?, semester = ? WHERE id = ? 
+        `, [courseCode, title, credits, description, semester, id], 
+        function(err) { 
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            if (this.changes === 0) {
+                return res.status(404).json({ message: 'Course not found' });
+            }
+            res.json({ message: 'Course updated' }); 
+        }
+    ); 
+});
+
+
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 })
