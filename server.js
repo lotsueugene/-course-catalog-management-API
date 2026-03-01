@@ -1,7 +1,29 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
+const { body, validationResult } = require('express-validator');
 const app = express();
 const port = 3000;
+
+
+//Request logger
+const requestLogger = (req, res, next) => {
+    const timeStamp = new Date().toISOString();
+    console.log(`[${timeStamp}] ${req.method} ${req.originalUrl}`)
+
+    if(req.method === "POST" || req.method === "PUT") {
+        console.log("Request Body", JSON.stringify(req.body, null, 2))
+    }
+
+    next()
+};
+
+
+
+// Built-in middleware for parsing JSON
+app.use(express.json());
+
+// Custom logging middleware
+app.use(requestLogger);
 
 // Middleware
 app.use(express.json());
@@ -24,6 +46,28 @@ app.get('/api/courses/:id', (req, res) => {
     db.get('SELECT * FROM courses WHERE id = ?', [id], (err, row) => { 
         res.json(row); 
     }); 
+});
+
+
+//Add new course
+app.post('/api/courses', (req, res) => { 
+    const { courseCode, title, credits, description, semester } = req.body; 
+
+    db.run(
+        `INSERT INTO courses (courseCode, title, credits, description, semester)
+         VALUES (?, ?, ?, ?, ?)`,
+        [courseCode, title, credits, description, semester], 
+        function (err) { 
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            res.status(201).json({ 
+                message: "Course created successfully",
+                id: this.lastID 
+            }); 
+        }
+    ); 
 });
 
 
