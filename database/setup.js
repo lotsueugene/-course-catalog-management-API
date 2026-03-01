@@ -23,7 +23,7 @@ db.run(`
     )
 `, (error) => {
     if (error
-        
+
     ) {
         console.log(error);
     } else {
