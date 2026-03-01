@@ -22,7 +22,9 @@ db.run(`
         semester TEXT
     )
 `, (error) => {
-    if (error) {
+    if (error
+        
+    ) {
         console.log(error);
     } else {
         console.log('Courses table created');
