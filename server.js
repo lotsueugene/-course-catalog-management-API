@@ -36,13 +36,30 @@ app.get('/api/courses', (req, res) => {
 
 
 // GET single course
-app.get('/api/courses/:id', (req, res) => { 
-    const id = req.params.id; 
-    db.get('SELECT * FROM courses WHERE id = ?', [id], (err, row) => { 
-        res.json(row); 
-    }); 
-});
+app.get('/api/courses/:id', (req, res) => {
+    const id = req.params.id;
+    if (isNaN(id) || id <= 0) {
+        return res.status(400).json({
+            error: 'Invalid course ID. ID must be a positive number.'
+        });
+    }
 
+    db.get('SELECT * FROM courses WHERE id = ?', [id], (err, row) => {
+        if (err) {
+            return res.status(500).json({
+                error: 'Database error'
+            });
+        }
+
+        if (!row) {
+            return res.status(404).json({
+                error: 'Course not found'
+            });
+        }
+
+        res.json(row);
+    });
+});
 
 //Add new course
 app.post('/api/courses', (req, res) => { 
